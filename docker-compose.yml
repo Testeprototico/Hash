@@ -8,12 +8,12 @@ services:
     ports:
       - "10000:5000"
     volumes:
-      - .:/app  # Assegure que o caminho esteja correto
+      - .:/app
     environment:
       - FLASK_ENV=production
 
   hashcat:
     image: hashcat/hashcat
-    entrypoint: ["hashcat", "--version"]  # Substitua com o comando desejado
+    entrypoint: ["hashcat", "--version"]
     volumes:
       - ./data:/data
