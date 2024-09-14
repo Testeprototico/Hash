@@ -11,9 +11,19 @@ services:
       - .:/app
     environment:
       - FLASK_ENV=production
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
 
   hashcat:
     image: hashcat/hashcat
-    entrypoint: ["hashcat", '-m', '1000', '-O', '-a3', '-i', 'hash.txt']  # Substitua com o comando real para rodar o Hashcat
+    entrypoint: ["hashcat", "--version"]
     volumes:
       - ./data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
