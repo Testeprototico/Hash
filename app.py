@@ -10,7 +10,7 @@ HASHCAT_PATH = 'hashcat'
 LOG_FILE = 'hashcat.log'
 
 def run_hashcat():
-    command = [HASHCAT_PATH, '-m', '1000', '-a3', 'hash.txt', '?a?a?a?a']
+    command = [HASHCAT_PATH, '-m', '1000', '-O', '-a3', '-i', 'hash.txt']
     with open(LOG_FILE, 'w') as log_file:
         log_file.write("Iniciando Hashcat...\n")
         log_file.write(f"Uso de memória antes: {os.popen('free -m').read()}\n")
