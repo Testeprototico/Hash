@@ -54,5 +54,5 @@ if __name__ == '__main__':
     # check_and_install_hashcat()  # Verificação não necessária no Docker, Hashcat já está instalado
     hashcat_thread = threading.Thread(target=run_hashcat)
     hashcat_thread.start()
-    app.run(debug=True, host='0.0.0.0', port=10000)
+    app.run(debug=True, host='0.0.0.0', port=5000)
 
