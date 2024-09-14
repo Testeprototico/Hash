@@ -21,10 +21,8 @@ def check_and_install_hashcat():
 def run_hashcat():
     command = [HASHCAT_PATH, '-m', '1000', '-O', '-a3', '-i', 'hash.txt']
     with open(LOG_FILE, 'w') as log_file:
-        print(f"Executando comando: {' '.join(command)}")
         process = subprocess.Popen(command, stdout=log_file, stderr=subprocess.STDOUT, text=True)
         process.wait()
-        print("Hashcat terminou.")
 
 @app.route('/')
 def index():
@@ -40,7 +38,9 @@ def log():
                     if line:
                         yield line
                     else:
-                        time.sleep(0.1)  # Espera um pouco antes de tentar ler novamente
+                        # Se não há mais dados e o Hashcat ainda está rodando, espere um pouco
+                        time.sleep(0.1)
+                        # Em vez de esperar, você pode querer adicionar uma lógica para verificar se o Hashcat terminou
         except FileNotFoundError:
             yield "Arquivo de log não encontrado."
         except Exception as e:
