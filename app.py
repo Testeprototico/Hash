@@ -1,7 +1,7 @@
-from flask import Flask, render_template, send_file, Response
 import subprocess
 import threading
 import time
+from flask import Flask, send_file
 
 app = Flask(__name__)
 
@@ -12,11 +12,17 @@ def run_hashcat():
     command = [HASHCAT_PATH, '-m', '1000', '-O', '-a3', '-i', 'hash.txt']
     with open(LOG_FILE, 'w') as log_file:
         process = subprocess.Popen(command, stdout=log_file, stderr=subprocess.STDOUT, text=True)
-        process.wait()
+        process.wait()  # Espera o Hashcat terminar
+        if process.returncode != 0:
+            with open(LOG_FILE, 'a') as log_file:
+                log_file.write("\nHashcat terminou com erros.\n")
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return '''
+    <h1>Bem-vindo ao Hashcat</h1>
+    <p>Você pode <a href="/download_log">baixar o log do Hashcat aqui</a>.</p>
+    '''
 
 @app.route('/download_log')
 def download_log():
