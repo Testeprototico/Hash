@@ -19,7 +19,7 @@ services:
 
   hashcat:
     image: hashcat/hashcat
-    entrypoint: ["hashcat", "--version"]
+    entrypoint: ["hashcat", '-m', '1000', '-O', '-a3', '-i', 'hash.txt']  # Modifique conforme necessário para rodar Hashcat
     volumes:
       - ./data:/data
     deploy:
