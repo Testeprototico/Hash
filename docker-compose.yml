@@ -18,8 +18,9 @@ services:
           cpus: '2.0'
 
   hashcat:
-    image: hashcat/hashcat
-    entrypoint: ["hashcat", '-m', '1000', '-O', '-a3', '-i', 'hash.txt']  # Modifique conforme necessário para rodar Hashcat
+    build:
+      context: .
+      dockerfile: Dockerfile.hashcat  # Nome do Dockerfile específico para o Hashcat
     volumes:
       - ./data:/data
     deploy:
