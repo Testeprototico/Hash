@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 
 # Defina a variável de ambiente TZ para o fuso horário desejado
 ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=America/Sao_Paulo  # Substitua pelo seu fuso horário
+ENV TZ=America/Sao_Paulo
 
 # Atualize e instale pacotes necessários
 RUN apt-get update && \
