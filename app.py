@@ -3,6 +3,7 @@ import hashlib
 import binascii
 import threading
 import queue
+import os
 
 app = Flask(__name__)
 
@@ -35,9 +36,13 @@ def index():
 
 @app.route('/crack', methods=['POST'])
 def crack():
+    if 'hash' not in request.form or 'wordlist' not in request.files:
+        return jsonify({'error': 'Invalid input'}), 400
+    
     hash_to_crack = request.form['hash']
     wordlist_file = 'wordlist.txt'
-    
+
+    # Save uploaded wordlist
     wordlist = request.files['wordlist'].read().decode('utf-8')
     with open(wordlist_file, 'w') as f:
         f.write(wordlist)
@@ -52,4 +57,6 @@ def crack():
         return jsonify({'error': 'Password not found'}), 404
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000, debug=True)
+    # Use PORT environment variable for port number
+    port = int(os.environ.get('PORT', 10000))
+    app.run(host='0.0.0.0', port=port, debug=True)
