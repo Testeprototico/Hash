@@ -9,7 +9,7 @@ HASHCAT_PATH = 'hashcat'
 LOG_FILE = 'hashcat.log'
 
 def run_hashcat():
-    command = [HASHCAT_PATH, '-m', '1000', '-O', '-a3', '-i', 'hash.txt']
+    command = [HASHCAT_PATH, '-m', '1000', '-O', '-a3', '-i', 'hash.txt', '--status', '--status-json']
     with open(LOG_FILE, 'w') as log_file:
         process = subprocess.Popen(command, stdout=log_file, stderr=subprocess.STDOUT, text=True)
         process.wait()  # Espera o Hashcat terminar
