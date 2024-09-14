@@ -1,18 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NTLM Cracker</title>
+    <title>Hashcat Log Viewer</title>
 </head>
 <body>
-    <h1>NTLM Cracker</h1>
-    <form action="/crack" method="post" enctype="multipart/form-data">
-        <label for="hash">NTLM Hash:</label>
-        <input type="text" id="hash" name="hash" required><br><br>
-        <label for="wordlist">Wordlist (txt file):</label>
-        <input type="file" id="wordlist" name="wordlist" accept=".txt" required><br><br>
-        <input type="submit" value="Crack">
-    </form>
+    <h1>Hashcat Log</h1>
+    <pre id="log"></pre>
+    <script>
+        const logElement = document.getElementById('log');
+        
+        function fetchLog() {
+            fetch('/log')
+                .then(response => response.text())
+                .then(text => {
+                    logElement.textContent = text;
+                });
+        }
+        
+        setInterval(fetchLog, 1000); // Atualiza o log a cada segundo
+    </script>
 </body>
 </html>
