@@ -33,14 +33,21 @@ def index():
 @app.route('/log')
 def log():
     def generate():
-        with open(LOG_FILE) as f:
-            while True:
-                line = f.readline()
-                if not line:
-                    time.sleep(0.1)  # Espera um pouco antes de tentar ler novamente
-                    continue
-                yield line
+        try:
+            with open(LOG_FILE) as f:
+                while True:
+                    line = f.readline()
+                    if not line:
+                        time.sleep(0.1)
+                        continue
+                    yield line
+        except FileNotFoundError:
+            yield "Arquivo de log não encontrado."
+        except Exception as e:
+            yield f"Erro: {str(e)}"
+
     return Response(generate(), mimetype='text/plain')
+
 
 if __name__ == '__main__':
     # check_and_install_hashcat()  # Verificação não necessária no Docker, Hashcat já está instalado
