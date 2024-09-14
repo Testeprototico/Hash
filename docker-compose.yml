@@ -6,14 +6,14 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "10000:5000"  # Mapeia a porta 5000 do contêiner para a porta 10000 no host
+      - "10000:5000"
     volumes:
-      - .:/app  # Sincroniza o código local com o contêiner
+      - .:/app  # Assegure que o caminho esteja correto
     environment:
       - FLASK_ENV=production
 
   hashcat:
-    image: hashcat/hashcat  # Imagem do Hashcat
-    entrypoint: ["hashcat", "--version"]  # Ajuste conforme necessário
+    image: hashcat/hashcat
+    entrypoint: ["hashcat", "--version"]  # Substitua com o comando desejado
     volumes:
-      - ./data:/data  # Ajuste conforme necessário para os dados do Hashcat
+      - ./data:/data
