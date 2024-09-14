@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "10000:5000"  # Mapeia a porta 5000 do contêiner para a porta 10000 no host
+    volumes:
+      - .:/app  # Sincroniza o código local com o contêiner
+    environment:
+      - FLASK_ENV=production
+
+  hashcat:
+    image: hashcat/hashcat  # Imagem do Hashcat
+    entrypoint: ["hashcat", "--version"]  # Ajuste conforme necessário
+    volumes:
+      - ./data:/data  # Ajuste conforme necessário para os dados do Hashcat
