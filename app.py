@@ -15,9 +15,11 @@ class NTLMCracker(threading.Thread):
         self.result = None
 
     def ntlm_hash(self, password):
+        """Generate NTLM hash from a password."""
         return hashlib.new('md4', password.encode('utf-16le')).digest()
 
     def run(self):
+        """Perform the NTLM cracking."""
         q = queue.Queue()
         with open(self.wordlist, 'r') as file:
             for line in file:
@@ -47,14 +49,16 @@ def crack():
     with open(wordlist_file, 'w') as f:
         f.write(wordlist)
 
+    # Start NTLM cracker
     cracker = NTLMCracker(hash_to_crack, wordlist_file)
     cracker.start()
-    cracker.join()
+    cracker.join()  # Wait for the thread to finish
 
     if cracker.result:
         return jsonify({'password': cracker.result})
     else:
-        return jsonify({'error': 'Password not found'}), 404
+        # Keep the endpoint active until a result is found
+        return jsonify({'status': 'Searching...'}), 200
 
 if __name__ == '__main__':
     # Use PORT environment variable for port number
