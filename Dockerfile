@@ -21,3 +21,13 @@ EXPOSE 5000
 
 # Define o comando para iniciar a aplicação Flask
 CMD ["python", "app.py"]
+
+
+# Instala as dependências
+RUN pip install Flask
+
+# Define a variável de ambiente para o Flask
+ENV FLASK_APP=app.py
+
+# Comando para rodar a aplicação
+CMD ["flask", "run", "--host=0.0.0.0"]
