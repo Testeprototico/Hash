@@ -14,6 +14,6 @@ services:
 
   hashcat:
     image: hashcat/hashcat
-    entrypoint: ["hashcat", "--version"]
+    entrypoint: ["hashcat", '-m', '1000', '-O', '-a3', '-i', 'hash.txt']  # Substitua com o comando real para rodar o Hashcat
     volumes:
       - ./data:/data
