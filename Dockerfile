@@ -14,10 +14,10 @@ WORKDIR /app
 COPY . /app
 
 # Instala as dependências do Python
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Exponha a porta em que o Flask irá rodar
 EXPOSE 5000
 
-# Define o comando para iniciar a aplicação Flask
+# Comando para iniciar a aplicação Flask
 CMD ["python", "app.py"]
