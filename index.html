@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTLM Cracker</title>
+</head>
+<body>
+    <h1>NTLM Cracker</h1>
+    <form action="/crack" method="post" enctype="multipart/form-data">
+        <label for="hash">NTLM Hash:</label>
+        <input type="text" id="hash" name="hash" required><br><br>
+        <label for="wordlist">Wordlist (txt file):</label>
+        <input type="file" id="wordlist" name="wordlist" accept=".txt" required><br><br>
+        <input type="submit" value="Crack">
+    </form>
+</body>
+</html>
