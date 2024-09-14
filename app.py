@@ -1,66 +1,62 @@
-from flask import Flask, request, render_template, jsonify
-import hashlib
-import binascii
-import threading
-import queue
+import subprocess
+import sys
 import os
+from flask import Flask, render_template, Response
+import time
+import threading
 
 app = Flask(__name__)
 
-class NTLMCracker(threading.Thread):
-    def __init__(self, hash_to_crack, wordlist):
-        super().__init__()
-        self.hash_to_crack = hash_to_crack
-        self.wordlist = wordlist
-        self.result = None
+HASHCAT_PATH = 'hashcat'
+LOG_FILE = 'hashcat.log'
 
-    def ntlm_hash(self, password):
-        """Generate NTLM hash from a password."""
-        return hashlib.new('md4', password.encode('utf-16le')).digest()
+def check_and_install_hashcat():
+    try:
+        # Verifica se o Hashcat está instalado
+        subprocess.run([HASHCAT_PATH, '--version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print("Hashcat está instalado.")
+    except subprocess.CalledProcessError:
+        print("Hashcat não encontrado. Instalando...")
+        install_hashcat()
 
-    def run(self):
-        """Perform the NTLM cracking."""
-        q = queue.Queue()
-        with open(self.wordlist, 'r') as file:
-            for line in file:
-                q.put(line.strip())
+def install_hashcat():
+    # Instala o Hashcat para sistemas baseados em Debian
+    if sys.platform.startswith('linux'):
+        try:
+            subprocess.run(['sudo', 'apt-get', 'update'], check=True)
+            subprocess.run(['sudo', 'apt-get', 'install', '-y', 'hashcat'], check=True)
+            print("Hashcat instalado com sucesso.")
+        except subprocess.CalledProcessError as e:
+            print(f"Erro ao instalar o Hashcat: {e}")
+            sys.exit(1)
+    else:
+        print("Instalação automática do Hashcat não suportada para este sistema operacional.")
+        sys.exit(1)
 
-        while not q.empty():
-            password = q.get()
-            hashed_password = binascii.hexlify(self.ntlm_hash(password)).decode()
-            if hashed_password == self.hash_to_crack:
-                self.result = password
-                return
+def run_hashcat():
+    command = [HASHCAT_PATH, '-m', '1000 -O -a3 -i', 'hash.txt']  # Ajuste os argumentos conforme necessário
+    with open(LOG_FILE, 'w') as log_file:
+        process = subprocess.Popen(command, stdout=log_file, stderr=log_file, text=True)
+        process.wait()
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/crack', methods=['POST'])
-def crack():
-    if 'hash' not in request.form or 'wordlist' not in request.files:
-        return jsonify({'error': 'Invalid input'}), 400
-    
-    hash_to_crack = request.form['hash']
-    wordlist_file = 'wordlist.txt'
-
-    # Save uploaded wordlist
-    wordlist = request.files['wordlist'].read().decode('utf-8')
-    with open(wordlist_file, 'w') as f:
-        f.write(wordlist)
-
-    # Start NTLM cracker
-    cracker = NTLMCracker(hash_to_crack, wordlist_file)
-    cracker.start()
-    cracker.join()  # Wait for the thread to finish
-
-    if cracker.result:
-        return jsonify({'password': cracker.result})
-    else:
-        # Keep the endpoint active until a result is found
-        return jsonify({'status': 'Searching...'}), 200
+@app.route('/log')
+def log():
+    def generate():
+        with open(LOG_FILE) as f:
+            while True:
+                line = f.readline()
+                if not line:
+                    time.sleep(0.1)  # Espera um pouco antes de tentar ler novamente
+                    continue
+                yield line
+    return Response(generate(), mimetype='text/plain')
 
 if __name__ == '__main__':
-    # Use PORT environment variable for port number
-    port = int(os.environ.get('PORT', 10000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    check_and_install_hashcat()  # Verifica e instala o Hashcat se necessário
+    hashcat_thread = threading.Thread(target=run_hashcat)
+    hashcat_thread.start()
+    app.run(debug=True, use_reloader=False)
