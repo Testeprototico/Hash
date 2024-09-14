@@ -9,7 +9,7 @@ HASHCAT_PATH = 'hashcat'
 LOG_FILE = 'hashcat.log'
 
 def run_hashcat():
-    command = [HASHCAT_PATH, '-m', '1000', '-O', '-a3', '-i', 'hash.txt']
+    command = [HASHCAT_PATH, '-m', '1000', '-a', '-3',  'hash.txt']
     with open(LOG_FILE, 'w') as log_file:
         log_file.write("Iniciando Hashcat...\n")  # Adicione uma mensagem inicial
         process = subprocess.Popen(command, stdout=log_file, stderr=subprocess.STDOUT, text=True)
