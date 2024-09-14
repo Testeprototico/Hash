@@ -37,16 +37,17 @@ def log():
             with open(LOG_FILE) as f:
                 while True:
                     line = f.readline()
-                    if not line:
-                        time.sleep(0.1)
-                        continue
-                    yield line
+                    if line:
+                        yield line
+                    else:
+                        time.sleep(0.1)  # Espera um pouco antes de tentar ler novamente
         except FileNotFoundError:
             yield "Arquivo de log não encontrado."
         except Exception as e:
             yield f"Erro: {str(e)}"
 
     return Response(generate(), mimetype='text/plain')
+
 
 
 if __name__ == '__main__':
