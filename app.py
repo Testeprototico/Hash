@@ -39,7 +39,7 @@ def log():
                         yield line
                     else:
                         # Se não há mais dados e o Hashcat ainda está rodando, espere um pouco
-                        time.sleep(0.1)
+                        time.sleep(3)
                         # Em vez de esperar, você pode querer adicionar uma lógica para verificar se o Hashcat terminou
         except FileNotFoundError:
             yield "Arquivo de log não encontrado."
