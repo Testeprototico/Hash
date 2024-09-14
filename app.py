@@ -1,22 +1,12 @@
+from flask import Flask, render_template, send_file, Response
 import subprocess
-import sys
-import os
-from flask import Flask, render_template, Response
-import time
 import threading
+import time
 
 app = Flask(__name__)
 
 HASHCAT_PATH = 'hashcat'
 LOG_FILE = 'hashcat.log'
-
-def check_and_install_hashcat():
-    try:
-        # Verifica se o Hashcat está instalado
-        subprocess.run([HASHCAT_PATH, '--version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        print("Hashcat está instalado.")
-    except subprocess.CalledProcessError:
-        print("Hashcat não encontrado. Instalando...")
 
 def run_hashcat():
     command = [HASHCAT_PATH, '-m', '1000', '-O', '-a3', '-i', 'hash.txt']
@@ -28,31 +18,16 @@ def run_hashcat():
 def index():
     return render_template('index.html')
 
-@app.route('/log')
-def log():
-    def generate():
-        try:
-            with open(LOG_FILE) as f:
-                while True:
-                    line = f.readline()
-                    if line:
-                        yield line
-                    else:
-                        # Se não há mais dados e o Hashcat ainda está rodando, espere um pouco
-                        time.sleep(3)
-                        # Em vez de esperar, você pode querer adicionar uma lógica para verificar se o Hashcat terminou
-        except FileNotFoundError:
-            yield "Arquivo de log não encontrado."
-        except Exception as e:
-            yield f"Erro: {str(e)}"
-
-    return Response(generate(), mimetype='text/plain')
-
-
+@app.route('/download_log')
+def download_log():
+    try:
+        return send_file(LOG_FILE, as_attachment=True)
+    except FileNotFoundError:
+        return "Arquivo de log não encontrado.", 404
+    except Exception as e:
+        return f"Erro: {str(e)}", 500
 
 if __name__ == '__main__':
-    # check_and_install_hashcat()  # Verificação não necessária no Docker, Hashcat já está instalado
     hashcat_thread = threading.Thread(target=run_hashcat)
     hashcat_thread.start()
-    app.run(debug=True, host='0.0.0.0', port=5000)
-
+    app.run(debug=True, host='0.0.0.0', port=5000)  # Ajuste a porta se necessário
