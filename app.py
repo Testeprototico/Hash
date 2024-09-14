@@ -19,10 +19,12 @@ def check_and_install_hashcat():
         print("Hashcat não encontrado. Instalando...")
 
 def run_hashcat():
-    command = [HASHCAT_PATH, '-m', '1000 -O -a3 -i', 'hash.txt']  # Ajuste os argumentos conforme necessário
+    command = [HASHCAT_PATH, '-m', '1000', '-O', '-a3', '-i', 'hash.txt']
     with open(LOG_FILE, 'w') as log_file:
-        process = subprocess.Popen(command, stdout=log_file, stderr=log_file, text=True)
+        print(f"Executando comando: {' '.join(command)}")
+        process = subprocess.Popen(command, stdout=log_file, stderr=subprocess.STDOUT, text=True)
         process.wait()
+        print("Hashcat terminou.")
 
 @app.route('/')
 def index():
