@@ -17,21 +17,6 @@ def check_and_install_hashcat():
         print("Hashcat está instalado.")
     except subprocess.CalledProcessError:
         print("Hashcat não encontrado. Instalando...")
-        install_hashcat()
-
-def install_hashcat():
-    # Instala o Hashcat para sistemas baseados em Debian
-    if sys.platform.startswith('linux'):
-        try:
-            subprocess.run(['sudo', 'apt-get', 'update'], check=True)
-            subprocess.run(['sudo', 'apt-get', 'install', '-y', 'hashcat'], check=True)
-            print("Hashcat instalado com sucesso.")
-        except subprocess.CalledProcessError as e:
-            print(f"Erro ao instalar o Hashcat: {e}")
-            sys.exit(1)
-    else:
-        print("Instalação automática do Hashcat não suportada para este sistema operacional.")
-        sys.exit(1)
 
 def run_hashcat():
     command = [HASHCAT_PATH, '-m', '1000 -O -a3 -i', 'hash.txt']  # Ajuste os argumentos conforme necessário
@@ -56,7 +41,7 @@ def log():
     return Response(generate(), mimetype='text/plain')
 
 if __name__ == '__main__':
-    check_and_install_hashcat()  # Verifica e instala o Hashcat se necessário
+    # check_and_install_hashcat()  # Verificação não necessária no Docker, Hashcat já está instalado
     hashcat_thread = threading.Thread(target=run_hashcat)
     hashcat_thread.start()
-    app.run(debug=True, use_reloader=False)
+    app.run(debug=True, host='0.0.0.0', port=5000)
