@@ -9,13 +9,14 @@ HASHCAT_PATH = 'hashcat'
 LOG_FILE = 'hashcat.log'
 
 def run_hashcat():
-    command = [HASHCAT_PATH, '-m', '1000', '-O', '-a3', '-i', 'hash.txt', '--status', '--status-json']
+    command = [HASHCAT_PATH, '-m', '1000', '-O', '-a3', '-i', 'hash.txt']
     with open(LOG_FILE, 'w') as log_file:
+        log_file.write("Iniciando Hashcat...\n")  # Adicione uma mensagem inicial
         process = subprocess.Popen(command, stdout=log_file, stderr=subprocess.STDOUT, text=True)
         process.wait()  # Espera o Hashcat terminar
+        log_file.write(f"Hashcat terminou com o código de saída {process.returncode}\n")  # Adiciona código de saída
         if process.returncode != 0:
-            with open(LOG_FILE, 'a') as log_file:
-                log_file.write("\nHashcat terminou com erros.\n")
+            log_file.write("\nHashcat terminou com erros.\n")
 
 @app.route('/')
 def index():
@@ -27,6 +28,8 @@ def index():
 @app.route('/download_log')
 def download_log():
     try:
+        with open(LOG_FILE, 'r') as file:
+            file_content = file.read()
         return send_file(LOG_FILE, as_attachment=True)
     except FileNotFoundError:
         return "Arquivo de log não encontrado.", 404
