@@ -14,8 +14,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 2G
-          cpus: '1.0'
+          memory: 4G
+          cpus: '2.0'
 
   hashcat:
     image: hashcat/hashcat
@@ -25,5 +25,5 @@ services:
     deploy:
       resources:
         limits:
-          memory: 2G
-          cpus: '1.0'
+          memory: 4G
+          cpus: '2.0'
